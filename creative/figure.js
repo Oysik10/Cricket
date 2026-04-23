@@ -49,7 +49,6 @@ export function createPlayer(jerseyColor = 0xffffff) {
     const bodyMat = new THREE.MeshStandardMaterial({ color: jerseyColor });
     const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
 
-    // Torso & Limbs
     const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.25, 1.2, 8), bodyMat);
     torso.position.y = 1.6;
     torso.castShadow = true;
@@ -59,7 +58,6 @@ export function createPlayer(jerseyColor = 0xffffff) {
     head.position.y = 0.8;
     torso.add(head);
 
-    // Cap
     const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.1), bodyMat);
     cap.position.y = 0.25;
     head.add(cap);
