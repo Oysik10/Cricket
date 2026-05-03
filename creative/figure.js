@@ -3,6 +3,14 @@ import * as THREE from 'three';
 export function makeCricketPitch(params) {
     const group = new THREE.Group();
 
+    const ball = new THREE.Mesh(
+        new THREE.SphereGeometry(0.13),
+        new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.3 })
+    );
+    ball.castShadow = true;
+    ball.visible = false;
+    group.add(ball);
+
     const pitchTex = new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/hardwood2_diffuse.jpg');
     pitchTex.wrapS = pitchTex.wrapT = THREE.RepeatWrapping;
     pitchTex.repeat.set(1, 4);
@@ -12,6 +20,7 @@ export function makeCricketPitch(params) {
         new THREE.MeshStandardMaterial({ map: pitchTex, color: 0xd2b28c })
     );
     pitch.rotation.x = -Math.PI / 2;
+    pitch.position.y = 0.02; 
     pitch.receiveShadow = true;
     group.add(pitch);
 
@@ -33,15 +42,26 @@ export function makeCricketPitch(params) {
     group.add(createWicket(params.pitchLength / 2 - 0.5));
     group.add(createWicket(-params.pitchLength / 2 + 0.5));
 
-    const ball = new THREE.Mesh(
-        new THREE.SphereGeometry(0.13),
-        new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.3 })
-    );
-    ball.castShadow = true;
-    ball.visible = false;
-    group.add(ball);
-
     return { group, ball };
+}
+
+export function createStadium(radius = 75) {
+    const group = new THREE.Group();
+    const wallGeo = new THREE.CylinderGeometry(radius + 15, radius, 20, 64, 1, true);
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x222222, side: THREE.DoubleSide });
+    const wall = new THREE.Mesh(wallGeo, wallMat);
+    wall.position.y = 10;
+    group.add(wall);
+
+    const torus = new THREE.Mesh(
+        new THREE.TorusGeometry(radius + 2, 3, 16, 100),
+        new THREE.MeshStandardMaterial({ color: 0x333333 })
+    );
+    torus.rotation.x = Math.PI / 2;
+    torus.position.y = 0.5;
+    group.add(torus);
+
+    return group;
 }
 
 export function createPlayer(jerseyColor = 0xffffff) {
@@ -57,10 +77,6 @@ export function createPlayer(jerseyColor = 0xffffff) {
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.28), skinMat);
     head.position.y = 0.8;
     torso.add(head);
-
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.1), bodyMat);
-    cap.position.y = 0.25;
-    head.add(cap);
 
     const armGeom = new THREE.CylinderGeometry(0.1, 0.08, 0.9);
     const lArm = new THREE.Mesh(armGeom, bodyMat); lArm.position.set(-0.45, 0.2, 0); torso.add(lArm);
@@ -79,6 +95,5 @@ export function createPlayer(jerseyColor = 0xffffff) {
         batGroup.rotation.x = Math.PI / 4;
         torso.add(batGroup);
     }
-
     return group;
 }
